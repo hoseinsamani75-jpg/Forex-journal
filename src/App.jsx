@@ -427,7 +427,7 @@ function JournalView({ user }) {
 
   const loadTrades = async () => {
     try {
-      const q = query(collection(db,"trades"), where("uid","==",user.uid), orderBy("createdAt","desc"));
+      const q = query(collection(db,"trades"), where("uid","==",user.uid));
       const snap = await getDocs(q);
       setTrades(snap.docs.map(d=>({id:d.id,...d.data()})));
     } catch {}
@@ -535,7 +535,7 @@ function AdminView() {
 
   const loadUserTrades = async (u) => {
     setSelected(u);
-    const q = query(collection(db,"trades"), where("uid","==",u.id), orderBy("createdAt","desc"));
+    const q = query(collection(db,"trades"), where("uid","==",u.id));
     const snap = await getDocs(q);
     setUserTrades(snap.docs.map(d=>({id:d.id,...d.data()})));
     setView("journal");
