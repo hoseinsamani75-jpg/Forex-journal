@@ -429,10 +429,13 @@ function JournalView({ user }) {
     try {
       const q = query(collection(db,"trades"), where("uid","==",user.uid));
       const snap = await getDocs(q);
-      setTrades(snap.docs.map(d=>({id:d.id,...d.data()})));
-    } catch {}
+      const data = snap.docs.map(d=>({id:d.id,...d.data()}));
+      data.sort((a,b) => new Date(b.date) - new Date(a.date));
+      setTrades(data);
+    } catch(e) { console.error(e); }
     setLoading(false);
   };
+
 
   const addTrade = async (f) => {
     setSaving(true);
@@ -532,14 +535,16 @@ function AdminView() {
       setLoading(false);
     })();
   }, []);
-
   const loadUserTrades = async (u) => {
     setSelected(u);
     const q = query(collection(db,"trades"), where("uid","==",u.id));
     const snap = await getDocs(q);
-    setUserTrades(snap.docs.map(d=>({id:d.id,...d.data()})));
+    const data = snap.docs.map(d=>({id:d.id,...d.data()}));
+    data.sort((a,b) => new Date(b.date) - new Date(a.date));
+    setUserTrades(data);
     setView("journal");
   };
+
 
   if (loading) return <div style={{ color:"#64748b", padding:40, textAlign:"center" }}>در حال بارگذاری...</div>;
 
