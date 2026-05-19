@@ -425,18 +425,17 @@ function JournalView({ user }) {
     loadTrades();
   }, [user.uid]);
 
-  const loadTrades = async () => {
+ const loadTrades = async () => {
     try {
-      const q = query(collection(db,"trades"), where("uid","==",user.uid));
-      const snap = await getDocs(q);
-      const data = snap.docs.map(d=>({id:d.id,...d.data()}));
-      data.sort((a,b) => new Date(b.date) - new Date(a.date));
+      const snap = await getDocs(collection(db,"trades"));
+      const data = snap.docs
+        .map(d=>({id:d.id,...d.data()}))
+        .filter(t=>t.uid===user.uid)
+        .sort((a,b)=>new Date(b.date)-new Date(a.date));
       setTrades(data);
     } catch(e) { console.error(e); }
     setLoading(false);
   };
-
-
   const addTrade = async (f) => {
     setSaving(true);
     try {
